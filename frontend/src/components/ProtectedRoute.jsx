@@ -1,12 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable react-hooks/immutability */
 import { useState, useEffect } from "react"
-import jwt_decode from "jwt_decode"
+import { jwtDecode } from "jwt-decode"
 import api from "../api"
 import { ACCESS_TOKEN, REFRESH_TOKEN } from "../constants"
-import Navigate from "react-router-dom"
+import { Navigate } from "react-router-dom"
 
 function ProtectedRoute({ children }) {
     const [isAuthorized, setIsAuthorized] = useState(null)
+
+    useEffect(() => {
+        auth().catch(() => setIsAuthorized(false))
+    }, [])
 
     const refreshToken = async () => {
         const refreshToken = localStorage.getItem(ACCESS_TOKEN)
@@ -34,7 +39,7 @@ function ProtectedRoute({ children }) {
             isAuthorized(true)
             return
         }
-        const decoded = jwt_decode(token)
+        const decoded = jwtDecode(token)
         const tokenExpiration = decoded.exp
         const now = Date().now / 1000
 
@@ -44,10 +49,6 @@ function ProtectedRoute({ children }) {
             isAuthorized(true)
         }
     }
-
-    useEffect(() => {
-        auth().catch(() => setIsAuthorized(false))
-    }, [])
 
     if (isAuthorized === null) {
         return <div>loading ...</div>
