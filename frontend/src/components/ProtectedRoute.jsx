@@ -22,13 +22,13 @@ function ProtectedRoute({ children }) {
             })
             if (res.status === 200) {
                 localStorage.setItem(ACCESS_TOKEN, res.data.acces)
-                isAuthorized(true)
+                setIsAuthorized(true)
             } else {
-                isAuthorized(false)
+                setIsAuthorized(false)
             }
         } catch (error) {
             console.log(error)
-            isAuthorized(false)
+            setIsAuthorized(false)
         }
 
     }
@@ -36,7 +36,7 @@ function ProtectedRoute({ children }) {
     const auth = async () => {
         const token = localStorage.getItem(ACCESS_TOKEN)
         if (!token) {
-            isAuthorized(true)
+            setIsAuthorized(false)
             return
         }
         const decoded = jwtDecode(token)
@@ -44,15 +44,16 @@ function ProtectedRoute({ children }) {
         const now = Date().now / 1000
 
         if (tokenExpiration < now) {
-            await refreshToken
+            await refreshToken()
         } else {
-            isAuthorized(true)
+            setIsAuthorized(true)
         }
     }
 
     if (isAuthorized === null) {
         return <div>loading ...</div>
     }
+
 
     return isAuthorized ? children : <Navigate to="/login" />
 }

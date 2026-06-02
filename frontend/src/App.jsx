@@ -5,8 +5,9 @@ import Home from "./pages/Home"
 import NotFound from "./pages/NotFound"
 import Register from "./pages/Register"
 import ProtectedRoute from "./components/ProtectedRoute"
+import "./styles/Form.css"
 
-function logout() {
+function Logout() {
   localStorage.clear()
   return <Navigate to="/login" />
 }
@@ -27,6 +28,7 @@ function App() {
           </ProtectedRoute>
         } />
         <Route path="/login" element={<Login />} />
+        <Route path="/logout" element={<Logout />} />
         <Route path="/Register" element={<RegisterAndLogout />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
